@@ -2,6 +2,7 @@
 import paramiko
 import getpass
 import scrontrol as sc
+import sinfo as si
 
 # Function to establish an SSH connection to the cluster
 def establish_ssh_connection():
@@ -28,6 +29,11 @@ if ssh_connection:
 
     result = sc.parse_scontrol_partitions(stdout.read().decode("utf-8"))
     print(result)
+
+    stdin, stdout, stderr = ssh_connection.exec_command("sinfo")
+
+    result1 = si.parse_sinfo_partitions(stdout.read().decode("utf-8"))
+    print(result1)
     # Close the SSH connection when done
     ssh_connection.close()
     
