@@ -3,6 +3,7 @@ import paramiko
 import getpass
 import scrontrol as sc
 import sinfo as si
+import squeue as sq
 
 # Function to establish an SSH connection to the cluster
 def establish_ssh_connection():
@@ -34,6 +35,15 @@ if ssh_connection:
 
     result1 = si.parse_sinfo_partitions(stdout.read().decode("utf-8"))
     print(result1)
+
+    stdin, stdout, stderr = ssh_connection.exec_command("scontrol show nodes")
+    result2 = sc.parse_scontrol_nodes(stdout.read().decode("utf-8"))
+    print(result2)
+    
+    stdin, stdout, stderr = ssh_connection.exec_command("squeue")
+    result3 = sq.parse_squeue_jobs(stdout.read().decode("utf-8"))
+    print(result3)
+
     # Close the SSH connection when done
     ssh_connection.close()
     
