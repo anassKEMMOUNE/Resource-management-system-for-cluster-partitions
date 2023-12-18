@@ -1,7 +1,7 @@
 # After establishing the SSH connection
 import paramiko
 import getpass
-import scrontrol as sc
+import scontrol as sc
 import sinfo as si
 import squeue as sq
 
@@ -20,7 +20,7 @@ def establish_ssh_connection(username,password):
         print(f"Error connecting to the cluster: {str(e)}")
         return None
 
-# Establish SSH connection
+# # Establish SSH connection
 # ssh_connection = establish_ssh_connection()
 
 # # Check if the connection was successful before proceeding

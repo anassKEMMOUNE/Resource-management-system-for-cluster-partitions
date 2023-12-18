@@ -1,3 +1,5 @@
+import json_parsing as jp
+
 def parse_scontrol_partition(output: str):
   """
   Extracts information from a single partition output string.
@@ -59,6 +61,9 @@ def parse_scontrol_partitions(output: str):
       partitions[current_partition] = parse_scontrol_partition(partition_data)
       current_partition = ""
       partition_data = ""
+
+  info_show = jp.info_to_show_scontrol_partitions
+  jp.transform_to_json(partitions,info_show,'result0.json')
   return partitions
 
 
@@ -148,4 +153,6 @@ def parse_scontrol_nodes(output: str):
       nodes[current_node] = parse_scontrol_node(node_data)
       current_node = ""
       node_data = ""
+  info_show = jp.info_to_show_scontrol_nodes
+  jp.transform_to_json(nodes,info_show,'result2.json')
   return nodes
