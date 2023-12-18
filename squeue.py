@@ -1,17 +1,20 @@
-def parse_squeue_job(output: str):
+import json_parsing as jp
+
+def parse_squeue_jobs(output: str):
     """
-    Extracts information from a single job output string of squeue command.
+    Parses the output of `squeue` and returns a dictionary of job dictionaries.
 
     Args:
-        output: A string containing the output for a single job from squeue command.
+        output: The entire output of the `squeue` command.
 
     Returns:
-        A list of dictionaries, each containing extracted information about a job.
+        A dictionary of dictionaries, where each dictionary represents a job and contains its information.
     """
-    jobs = []
+
+    jobs = {}
 
     # Split the output into lines
-    lines = output.strip().split('\n')
+    lines = output.strip().split("\n")
 
     # Skip the header line
     header = lines[0]
@@ -31,30 +34,8 @@ def parse_squeue_job(output: str):
 
         # Create a dictionary for each job and append to the list
         job_info = dict(zip(column_names, columns))
-        jobs.append(job_info)
-
-    return jobs
-
-
-
-def parse_squeue_jobs(output: str):
-    """
-    Parses the output of `squeue` and returns a list of job dictionaries.
-
-    Args:
-        output: The entire output of the `squeue` command.
-
-    Returns:
-        A list of dictionaries, where each dictionary represents a job and contains its information.
-    """
-    jobs = []
-
-    # Split the output into sections for each job
-    job_sections = output.strip().split("\n\n")
-
-    for job_section in job_sections:
-        job = parse_squeue_job(job_section)
-        if job:
-            jobs.append(job)
+        jobs[job_info["JOBID"]] = job_info
+    info_show = jp.info_to_show_squeue
+    jp.transform_to_json(jobs,info_show,'static/json/result3.json')
 
     return jobs

@@ -1,17 +1,20 @@
-def parse_sinfo_partition(output: str):
+import json_parsing as jp
+
+def parse_sinfo_partitions(output: str):
     """
-    Extracts information from a single partition output string of sinfo command.
+    Parses the output of `sinfo` and returns a dictionary of partition dictionaries.
 
     Args:
-        output: A string containing the output for a single partition from sinfo command.
+        output: The entire output of the `sinfo` command.
 
     Returns:
-        A list of dictionaries, each containing information about a partition.
+        A dictionary of dictionaries, where each dictionary represents a partition and contains its information.
     """
-    partitions = []
+
+    partitions = {}
 
     # Split the output into lines
-    lines = output.split('\n')
+    lines = output.strip().split("\n")
 
     # Skip the header line
     header = lines[0]
@@ -29,28 +32,11 @@ def parse_sinfo_partition(output: str):
         # Split each line into columns
         columns = line.split(maxsplit=len(column_names) - 1)
 
-        # Create a dictionary for each partition
+        # Create a dictionary for each partition and append to the list
         partition_info = dict(zip(column_names, columns))
-        partitions.append(partition_info)
+        partitions[partition_info["PARTITION"]] = partition_info
 
-    return partitions
-
-
-def parse_sinfo_partitions(output: str):
-    """
-    Parses the output of `sinfo` and returns a list of partition dictionaries.
-
-    Args:
-        output: The entire output of the `sinfo` command.
-
-    Returns:
-        A list of dictionaries, where each dictionary represents a partition and contains its information.
-    """
-    partitions = []
-    # Split the output into sections for each partition
-    partition_sections = output.strip().split("\n\n")
-
-    for partition_section in partition_sections:
-        partitions.append(parse_sinfo_partition(partition_section))
+    info_show = jp.info_to_show_sinfo
+    jp.transform_to_json(partitions,info_show,'static/json/result1.json')
 
     return partitions
