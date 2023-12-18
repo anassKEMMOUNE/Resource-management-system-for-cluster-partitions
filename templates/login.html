@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Cluster Management</title>
 </head>
 <body>
-    <h1>Login</h1>
+    <h1>Ressource management system for cluster partitions</h1>
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -15,7 +15,7 @@
       {% endif %}
     {% endwith %}
     
-    <form method="post" action="{{ url_for('login') }}">
+    <form method="post" action="{{ url_for('login') }}" class ='login_form'>
         {{ form.csrf_token }}
         <label for="username">Username:</label>
         {{ form.username() }}

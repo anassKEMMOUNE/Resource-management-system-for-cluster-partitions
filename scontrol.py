@@ -63,7 +63,7 @@ def parse_scontrol_partitions(output: str):
       partition_data = ""
 
   info_show = jp.info_to_show_scontrol_partitions
-  jp.transform_to_json(partitions,info_show,'result0.json')
+  jp.transform_to_json(partitions,info_show,'static/json/result0.json')
   return partitions
 
 
@@ -154,5 +154,5 @@ def parse_scontrol_nodes(output: str):
       current_node = ""
       node_data = ""
   info_show = jp.info_to_show_scontrol_nodes
-  jp.transform_to_json(nodes,info_show,'result2.json')
+  jp.transform_to_json(nodes,info_show,'static/json/result2.json')
   return nodes

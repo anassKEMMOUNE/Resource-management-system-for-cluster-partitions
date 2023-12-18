@@ -4,8 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask App</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"> 
+    <script src="{{ url_for('static', filename='js/includeHTML.js') }}"></script>
 </head>
 <body>
-    <p>Hello <strong>{{ session["username"] }}</strong> {{ result }} Weclome to UM6P's Cluster</p>
+    <h1> Welcome to UM6P's Cluster</h1>
+    <p>Hello <strong>{{ session["username"] }}</strong> </p>
+    <p>{{ result0 }}</p>
+    <!-- <div include-html="test.html"></div> -->
 </body>
 </html>
+
+
+<script>
+    includeHTML();
+</script>

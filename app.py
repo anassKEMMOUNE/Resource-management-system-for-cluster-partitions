@@ -3,10 +3,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
 import login as lg
-import scontrol as sc
-import sinfo as si
-import squeue as sq
-app = Flask(__name__)
+import commands as cm
+
+app = Flask(__name__,static_url_path='/static')
 app.secret_key = 'your_secret_key'  # Change this to a random secret key for production
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
@@ -47,30 +46,17 @@ def login():
 def index():
     global ssh_connection
 
-        # Check if the user is logged in (you can use a more sophisticated check here)
+
     if 'username' in session:
         try : 
             ssh_connection
-        except NameError:
+        except :
             ssh_connection = lg.establish_ssh_connection(session['username'],session['password'])
-        # return f'Hello, {session["username"]}! Welcome to the dashboard.'
-        stdin, stdout, stderr = ssh_connection.exec_command("scontrol show partitions")
-        result = sc.parse_scontrol_partitions(stdout.read().decode("utf-8"))
-        
-
-        stdin, stdout, stderr = ssh_connection.exec_command("sinfo")
-        result1 = si.parse_sinfo_partitions(stdout.read().decode("utf-8"))
-        
-
-        stdin, stdout, stderr = ssh_connection.exec_command("scontrol show nodes")
-        result2 = sc.parse_scontrol_nodes(stdout.read().decode("utf-8"))
         
         
-        stdin, stdout, stderr = ssh_connection.exec_command("squeue")
-        result3 = sq.parse_squeue_jobs(stdout.read().decode("utf-8"))
-            
+        result0,result1,result2,result3 = cm.all_commands(ssh_connection)
         
-        return render_template('index.html', result = result ,result1 = result1, result2 = result2, result3 = result3)
+        return render_template('index.html', result0 = result0 ,result1 = result1, result2 = result2, result3 = result3)
     else:
         flash('You need to login first.', 'warning')
         return redirect(url_for('login'))
