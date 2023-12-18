@@ -3,15 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask App</title>
+    <title>Ressource management</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"> 
     <script src="{{ url_for('static', filename='js/includeHTML.js') }}"></script>
 </head>
 <body>
-    <h1> Welcome to UM6P's Cluster</h1>
-    <p>Hello <strong>{{ session["username"] }}</strong> </p>
-    <p>{{ result0 }}</p>
-    <!-- <div include-html="test.html"></div> -->
+    <h1>Hello <strong>{{ session["username"] }}</strong>, Welcome to UM6P's Cluster !</h1>
+    <label for="partitionSelect">Select Partition:</label>
+<select id="partitionSelect" onchange="showPartitionInfo()">
+    <!-- Options will be dynamically added using JavaScript -->
+</select>
+
+<div id="partitionInfo">
+    <h2>Partition Information</h2>
+    <pre id="partitionDetails"></pre>
+</div>
+
+<script>
+    // Fetch partition data from JSON file
+    fetch('static/json/result0.json')
+        .then(response => response.json())
+        .then(data => {
+            // Call a function to populate the dropdown with partition names
+            populatePartitionDropdown(data);
+
+            // Store the partition data globally
+            window.partitionData = data;
+        })
+        .catch(error => console.error('Error fetching partition data:', error));
+
+    function populatePartitionDropdown(partitionData) {
+        var select = document.getElementById('partitionSelect');
+
+        // Add options to the dropdown based on partition names
+        Object.keys(partitionData).forEach(partitionName => {
+            var option = document.createElement('option');
+            option.value = partitionName;
+            option.textContent = partitionName;
+            select.appendChild(option);
+        });
+    }
+
+    function showPartitionInfo() {
+        var select = document.getElementById('partitionSelect');
+        var partitionName = select.value;
+        var partitionDetails = window.partitionData[partitionName];
+
+        var partitionInfoDiv = document.getElementById('partitionInfo');
+        var partitionDetailsElement = document.getElementById('partitionDetails');
+
+        partitionDetailsElement.textContent = JSON.stringify(partitionDetails, null, 2);
+        partitionInfoDiv.style.display = 'block';
+    }
+</script>
 </body>
 </html>
 

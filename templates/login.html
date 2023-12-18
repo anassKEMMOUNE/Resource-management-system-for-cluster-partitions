@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cluster Management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/login.css') }}"> 
+
 </head>
 <body>
     <h1>Ressource management system for cluster partitions</h1>
@@ -15,7 +17,7 @@
       {% endif %}
     {% endwith %}
     
-    <form method="post" action="{{ url_for('login') }}" class ='login_form'>
+    <form method="post" action="{{ url_for('login') }}" class="login_form">
         {{ form.csrf_token }}
         <label for="username">Username:</label>
         {{ form.username() }}
