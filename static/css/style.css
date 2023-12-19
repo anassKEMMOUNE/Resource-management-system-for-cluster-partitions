@@ -3,3 +3,29 @@
     font-family: 'Roboto', sans-serif;
 }
 
+#partitionInfoDetails table{
+    width : 400px;
+    text-align: center;
+    border:none;
+    border-collapse: collapse;
+}
+#partitionInfoDetails table tr, #partitionInfoDetails table td, #partitionInfoDetails table th{
+    border: 1px solid black;
+    padding : 5px 0;
+}
+#nodeInfoDetails table{
+    width : 400px;
+    text-align: center;
+    border:none;
+    border-collapse: collapse;
+}
+#nodeInfoDetails table tr, #nodeInfoDetails table td, #nodeInfoDetails table th{
+    border: 1px solid black;
+    padding : 5px 0;
+}
+
+
+.generalInfo{
+    display:flex;
+    justify-content: space-around;
+}

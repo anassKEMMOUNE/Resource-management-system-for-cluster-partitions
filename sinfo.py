@@ -32,11 +32,16 @@ def parse_sinfo_partitions(output: str):
         # Split each line into columns
         columns = line.split(maxsplit=len(column_names) - 1)
 
-        # Create a dictionary for each partition and append to the list
+       # Create a dictionary for each partition and append to the list
         partition_info = dict(zip(column_names, columns))
-        partitions[partition_info["PARTITION"]] = partition_info
+        partition_name = partition_info["PARTITION"].replace("defq*","defq")
+        if not partition_info["PARTITION"] in partitions:
+            partitions[partition_name] = {"AVAIL": partition_info["AVAIL"], "TIMELIMIT": partition_info["TIMELIMIT"], partition_info["STATE"]:  partition_info["NODELIST"] }
+
+        else:
+            partitions[partition_name][partition_info["STATE"]] = partition_info["NODELIST"] 
 
     info_show = jp.info_to_show_sinfo
     jp.transform_to_json(partitions,info_show,'static/json/result1.json')
-
+    print(partitions)
     return partitions

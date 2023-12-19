@@ -3,7 +3,7 @@ import json
 info_to_show_scontrol_partitions = ["Nodes", "MaxCPUsPerNode", "MaxTime", "MaxNodes", "TotalNodes", "TotalCPUs", "DefMemPerCPU", "MaxMemPerCPU", "State"]
 
 #result 1
-info_to_show_sinfo = ["AVAIL", "TIMELIMIT", "NODES", "STATE", "NODELIST"]
+info_to_show_sinfo = ["AVAIL", "TIMELIMIT", "NODES", "STATE", "NODELIST","mix","alloc","drain","idle"]
 
 #result 2
 info_to_show_scontrol_nodes = ["CPUTot", "CPUAlloc", "CPULoad", "RealMemory", "AllocMem", "State", "Partitions", "CfgTRES", "AllocTRES"] #FreeMem = RealMemory - AllocMem
