@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressource management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/showInfo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/hh.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    <section class="everything">
+        <section class="sidebar">
+            <img src="{{ url_for('static', filename='img/slurm.png') }}" class="slurmLogo">
+            <a href="{{ url_for('partitions') }}"><img class ="sidebar_png" src="{{ url_for('static', filename='img/partitions.png') }}">Partitions</a>
+            <a href="{{ url_for('nodes') }}"><img class ="sidebar_png" src="{{ url_for('static', filename='img/nodes.png') }}">Nodes</a>
+            <a class ="logout" href="{{ url_for('login') }}"><img class ="sidebar_png" src="{{ url_for('static', filename='img/logout.png') }}">Logout</a>
+        </section>
+        <section class="main">
+            <p class="main_title">Hello <strong>{{ session["username"] }}</strong>, Welcome to UM6P's Cluster !</p>
+            <form class="generalInfo">
+                <div class="nodes">
+                    <label for="nodeSelect">Select node:</label>
+                    <select id="nodeSelect" onchange="nodeEvent()">
+                        <option value="none" selected>
+                            Select a node
+                        </option>
+                        <!-- Options will be dynamically added using JavaScript -->
+                    </select>
+                
+                    <div id="nodeInfo">
+                        <h2>node Information</h2>
+                        <pre id="nodeInfoDetails"></pre>
+                    </div>
+                
+                
+                </div>  
+                
+            
+                </div>
+
+            </form  >
+            <div id="chartContainer"></div>
+            <footer>
+                Made with ❤ by : Anass Kemmoune, Adnane Aitmagourt, Zineb Abercha
+            </footer>
+        </section>
+    
+    
+    </section>
+
+</body>
+<script>
+    function nodeEvent(){
+        showInfo('nodeSelect', 'nodeInfo');
+        var gpu; // Declare the gpu variable outside the fetch block
+
+fetch("static/json/result4.json")
+    .then(response => response.json())
+    .then(data => {
+        var selected = document.getElementById("nodeSelect").value;
+        if (selected in data) {
+            gpu = data[selected];
+        } else {
+            gpu = "No GPUs";
+        }
+
+        // Move the code that depends on the gpu variable here
+        var tbody = document.getElementsByTagName("tbody")[0];
+        var arr = ["<strong>GPU avail</strong>", gpu];
+        var tr = tbody.insertRow();
+        var th = document.createElement("th");
+        th.innerHTML = "GPUs avail";
+        tr.appendChild(th);
+        var td = tr.insertCell();
+        td.appendChild(document.createTextNode(gpu));
+    })
+    .catch(error => {
+        // Handle errors here
+        console.error('Error fetching data:', error);
+    });
+    }
+</script>
+
+
+<script>
+   window.addEventListener('change', function () {
+    document.getElementById('chartContainer').innerHTML = "";
+    var jsonData = window.dataStore["nodeSelect"];
+    var nodeName = document.getElementById("nodeSelect").value;
+
+    var nodeData = jsonData[nodeName];
+    var cpuAlloc = parseInt(nodeData.CPUAlloc);
+    var cpuTot = parseInt(nodeData.CPUTot);
+    var memTot = parseInt(nodeData.RealMemory);
+    var memAlloc = parseInt(nodeData.AllocMem);
+
+    // Create canvas for CPU chart
+    var cpuCanvas = document.createElement('canvas');
+    cpuCanvas.width = 400;
+    cpuCanvas.height = 200;
+    cpuCanvas.style.marginBottom = '20px';
+
+    var cpuCtx = cpuCanvas.getContext('2d');
+    new Chart(cpuCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Allocated CPU in ' + nodeName, 'Unallocated CPU in ' + nodeName],
+            datasets: [{
+                data: [cpuAlloc, cpuTot - cpuAlloc],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.5)', // Allocated CPU color
+                    'rgba(255, 99, 132, 0.5)', // Unallocated CPU color
+                ],
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: true,
+            title: {
+                display: true,
+                text: nodeName + ' - CPU'
+            }
+        }
+    });
+
+    // Append CPU canvas to container
+    document.getElementById('chartContainer').appendChild(cpuCanvas);
+
+    // Create canvas for Memory chart
+    var memCanvas = document.createElement('canvas');
+    memCanvas.width = 400;
+    memCanvas.height = 200;
+    memCanvas.style.marginBottom = '20px';
+
+    var memCtx = memCanvas.getContext('2d');
+    new Chart(memCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Allocated Memory in ' + nodeName, 'Unallocated Memory in ' + nodeName],
+            datasets: [{
+                data: [memAlloc, memTot - memAlloc],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.5)', // Allocated Memory color
+                    'rgba(255, 206, 86, 0.5)', // Unallocated Memory color
+                ],
+                borderColor: 'rgba(255, 255, 255, 1)',
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: false,
+            maintainAspectRatio: true,
+            title: {
+                display: true,
+                text: nodeName + ' - Memory'
+            }
+        }
+    });
+
+    // Append Memory canvas to container
+    document.getElementById('chartContainer').appendChild(memCanvas);
+});
+
+</script>
+
+
+</html>

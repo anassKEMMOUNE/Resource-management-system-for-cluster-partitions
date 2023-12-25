@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ressource management</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/showInfo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/squeueInfo.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/availableCpus.js')  }}"></script>
+    <script src="{{ url_for('static', filename='js/availableGpus.js')  }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    <section class="everything">
+        <section class="sidebar">
+            <img src="{{ url_for('static', filename='img/slurm.png') }}" class="slurmLogo">
+            <a href="{{ url_for('partitions') }}"><img class ="sidebar_png" src="{{ url_for('static', filename='img/partitions.png') }}">Partitions</a>
+            <a href="{{ url_for('nodes') }}"><img class ="sidebar_png" src="{{ url_for('static', filename='img/nodes.png') }}">Nodes</a>
+                <a class ="logout" href="{{ url_for('login') }}"><img class ="sidebar_png" src="{{ url_for('static', filename='img/logout.png') }}">Logout</a>
+        </section>
+        <section class="main">
+            <p class="main_title">Hello <strong>{{ session["username"] }}</strong>, Welcome to UM6P's Cluster !</p>
+            <p class="note">If the select dropdown shows <strong style="color: red;">No data Available </strong>Please refresh the page.</p>
+            <form class="generalInfo">
+                <div class="partition">
+                    <label for="partitionSelect">Select Partition:</label>
+                    <select id="partitionSelect" onchange="partitionEvent()">
+                        <option value="none" selected>
+                            No Data Available
+                        </option>
+                        <!-- Options will be dynamically added using JavaScript -->
+                    </select>
+                    <h2>Partition Information</h2>
+                    <div id="partitionInfo">
+                        
+                        <pre id="partitionInfoDetails"></pre>
+                        <div id="squeueInfo"></div>
+                    </div>
+                    
+                    </div>
+            
+                </div>
+
+            </form  >
+            <div class="charts">
+                <canvas id="cpuChart" width="250" height="250"></canvas>
+                <canvas id="gpuChart" width="250" height="250"></canvas>
+            </div>
+
+
+            <footer>
+                Made with ❤ by : Anass Kemmoune, Adnane Aitmagourt, Zineb Abercha
+            </footer>
+        </section>
+    
+    
+    </section>
+
+</body>
+<script>
+        
+document.addEventListener('DOMContentLoaded', function () {
+
+    partitionEvent();
+
+    // Trigger change event after setting up the event listener
+    var partitionSelect = document.getElementById("partitionSelect");
+    if (partitionSelect) {
+        var event = new Event('change');
+        partitionSelect.dispatchEvent(event);
+    }
+});
+    function partitionEvent() {
+    showInfo('partitionSelect', 'partitionInfo');
+    squeueInfo();
+
+    // Get the partition select element
+    var partitionSelect = document.getElementById("partitionSelect");
+
+    // Add change event listener to the partition select element
+    partitionSelect.addEventListener('change', function () {
+        var selected = partitionSelect.value;
+        numberOfCpus().then(cpuData => {
+            // Destroy the existing chart if it exists
+            var existingChart = Chart.getChart("cpuChart");
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            cpu = cpuData[selected];
+
+            // Calculate CPU not allocated
+            const cpuNotAlloc = cpu.TotalCPUs - cpu.CPUAlloc;
+
+            // Chart.js configuration
+            const config = {
+                type: 'doughnut',
+                data: {
+                    labels: ['CPU Allocated', 'CPU Not Allocated'],
+                    datasets: [{
+                        data: [cpu.CPUAlloc, cpuNotAlloc],
+                        backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'CPU Allocation Chart'
+                    }
+                }
+            };
+
+            // Get the canvas element
+            const ctx = document.getElementById('cpuChart').getContext('2d');
+
+            // Create the chart
+            const cpuChart = new Chart(ctx, config);
+
+        }).catch(error => {
+            // Handle errors here
+            console.error('Error:', error);
+        });
+
+
+
+        numberOfGpus().then(gpuData => {
+            // Destroy the existing chart if it exists
+            var existingChart = Chart.getChart("gpuChart");
+            if (existingChart) {
+                existingChart.destroy();
+            }
+
+            gpu = gpuData[selected];
+
+            // Calculate GPU not allocated
+            const gpuNotAlloc = gpu.TotalGPUs - gpu.GPUAlloc;
+
+            // Chart.js configuration
+            const config = {
+                type: 'doughnut',
+                data: {
+                    labels: ['GPU Allocated', 'GPU Not Allocated'],
+                    datasets: [{
+                        data: [gpu.GPUAlloc, gpuNotAlloc],
+                        backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(255, 99, 132, 0.7)'],
+                        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    title: {
+                        display: true,
+                        text: 'GPU Allocation Chart'
+                    }
+                }
+            };
+
+            // Get the canvas element
+            const ctx = document.getElementById('gpuChart').getContext('2d');
+
+            // Create the chart
+            const cpuChart = new Chart(ctx, config);
+
+        }).catch(error => {
+            // Handle errors here
+            console.error('Error:', error);
+        });
+    });
+}
+
+
+
+</script>
+
+
+
+
+</html>

@@ -6,7 +6,7 @@ info_to_show_scontrol_partitions = ["Nodes", "MaxCPUsPerNode", "MaxTime", "MaxNo
 info_to_show_sinfo = ["AVAIL", "TIMELIMIT", "NODES", "STATE", "NODELIST","mix","alloc","drain","idle"]
 
 #result 2
-info_to_show_scontrol_nodes = ["CPUTot", "CPUAlloc", "CPULoad", "RealMemory", "AllocMem", "State", "Partitions", "CfgTRES", "AllocTRES"] #FreeMem = RealMemory - AllocMem
+info_to_show_scontrol_nodes = ["CPUTot", "CPUAlloc", "CPULoad", "RealMemory", "AllocMem", "State", "Partitions"] #FreeMem = RealMemory - AllocMem
 
 #result 3
 info_to_show_squeue = ["PARTITION", "NAME", "USER", "ST", "TIME", "NODELIST(REASON)", "NODES"]

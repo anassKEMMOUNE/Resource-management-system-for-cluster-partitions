@@ -20,30 +20,3 @@ def establish_ssh_connection(username,password):
         print(f"Error connecting to the cluster: {str(e)}")
         return None
 
-# # Establish SSH connection
-# ssh_connection = establish_ssh_connection()
-
-# # Check if the connection was successful before proceeding
-# if ssh_connection:
-#     # Now you can use the 'ssh_connection' variable to interact with the cluster
-#     stdin, stdout, stderr = ssh_connection.exec_command("scontrol show partitions")
-
-#     result = sc.parse_scontrol_partitions(stdout.read().decode("utf-8"))
-#     print(result)
-
-#     stdin, stdout, stderr = ssh_connection.exec_command("sinfo")
-
-#     result1 = si.parse_sinfo_partitions(stdout.read().decode("utf-8"))
-#     print(result1)
-
-#     stdin, stdout, stderr = ssh_connection.exec_command("scontrol show nodes")
-#     result2 = sc.parse_scontrol_nodes(stdout.read().decode("utf-8"))
-#     print(result2)
-    
-#     stdin, stdout, stderr = ssh_connection.exec_command("squeue")
-#     result3 = sq.parse_squeue_jobs(stdout.read().decode("utf-8"))
-#     print(result3)
-
-#     # Close the SSH connection when done
-#     ssh_connection.close()
-    

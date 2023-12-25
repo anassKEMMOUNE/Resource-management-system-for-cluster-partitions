@@ -1,7 +1,9 @@
 import scontrol as sc
 import sinfo as si
 import squeue as sq
+import gpuInfo as gi
 import json
+import sys
 
 def all_commands(ssh_connection) :
     stdin, stdout, stderr = ssh_connection.exec_command("scontrol show partitions")
@@ -36,6 +38,16 @@ def all_commands(ssh_connection) :
     
     stdin, stdout, stderr = ssh_connection.exec_command("squeue")
     result3 = sq.parse_squeue_jobs(stdout.read().decode("utf-8"))
+
+    command = r'''
+    (squeue -t RUNNING -o "%N %b %C" | awk "NR>1 {split(\$2, gpuArray, \":\"); nodes[\$1]+=\$2; gpus[\$1]+=gpuArray[2]; cpus[\$1]+=\$3} END {for (node in nodes) print node, 1-gpus[node], 44-cpus[node]}" && \
+    sinfo -p gpu --states=idle --noheader -o "%n %G %c" | grep -v -e "maint" -e "drain" -e "resv" | awk "{{gsub(/[^0-9]/, \"\", \$2); print \$1, \$2, \$3}}") | \
+    grep -F "$(sinfo -o "%n %G" | grep "gpu" | awk "{{print \$1}}")" | column -t
+    '''
+
+    stdin, stdout, stderr = ssh_connection.exec_command(command)
+    result4 = gi.parse_gpuInfo(stdout.read().decode("utf-8"))
+
     
-    return result0,result1,result2,result3
+    return result0,result1,result2,result3,result4
                 

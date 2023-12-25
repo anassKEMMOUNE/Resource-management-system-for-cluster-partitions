@@ -23,6 +23,8 @@ class LoginForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    if "username" in session :
+        del session["username"]
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -30,20 +32,19 @@ def login():
         ssh_connection = lg.establish_ssh_connection(form.username.data,form.password.data)
         # For simplicity, let's check hardcoded credentials.
         if ssh_connection != None:
-            flash('Login successful!', 'success')
             # You can store user session data here if needed
             session['username'] = form.username.data
             session['password'] = form.password.data
             
-            return redirect(url_for('index'))
+            return redirect(url_for('partitions'))
         else:
             flash('Invalid username or password', 'danger')
 
     return render_template('login.html', form=form)
 
 
-@app.route('/index')
-def index():
+@app.route('/partitions')
+def partitions():
     global ssh_connection
 
 
@@ -54,13 +55,29 @@ def index():
             ssh_connection = lg.establish_ssh_connection(session['username'],session['password'])
         
         
-        result0,result1,result2,result3 = cm.all_commands(ssh_connection)
+        result0,result1,result2,result3,result4 = cm.all_commands(ssh_connection)
+        path0 = "url"
         
-        return render_template('index.html', result0 = result0 ,result1 = result1, result2 = result2, result3 = result3)
+        return render_template('partitions.html', result0 = result0 ,result1 = result1, result2 = result2, result3 = result3, result4 = result4 ,path0 = path0)
     else:
-        flash('You need to login first.', 'warning')
+        flash('You need to login first.', 'danger')
         return redirect(url_for('login'))
-    
+
+
+@app.route('/nodes')
+def nodes():
+    if 'username' in session:
+        try : 
+            ssh_connection
+        except :
+            ssh_connection = lg.establish_ssh_connection(session['username'],session['password'])
+        
+        
+        return render_template('nodes.html')
+    else:
+        flash('You need to login first.', 'danger')
+        return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -21,7 +21,10 @@ function populateDropdown(data, dropdownId) {
 
     // Clear previous options
     select.innerHTML = '';
-
+        var option = document.createElement('option');
+        option.value = 'None';
+        option.textContent = "Select an option";
+        select.appendChild(option);
     // Add options to the dropdown based on data
     Object.keys(data).forEach(dataName => {
         var option = document.createElement('option');
@@ -35,7 +38,8 @@ function showInfo(dropdownId, containerId) {
     var select = document.getElementById(dropdownId);
     var dataName = select.value;
     var dataDetails = window.dataStore[dropdownId] && window.dataStore[dropdownId][dataName];
-    console.log(dataDetails);
+
+    // console.log("fbsd",transformNodeFormat(dataDetails["Nodes"]));
     console.log(window.dataStore[dropdownId]);
 
     var container = document.getElementById(containerId);
@@ -78,6 +82,51 @@ function showInfo(dropdownId, containerId) {
         console.error('Data details not available for:', dataName);
     }
 }
+
+
+function transformNodeFormat(initial){
+    var tst = initial.replace("node","").replace("[","").replace("]","");
+    var middle = tst.split(",");
+    var output = [];
+    middle.forEach(function(element){
+        if (element.includes("-")){
+            var a = element.split("-");
+            var start = parseInt(a[0]);
+            var end = parseInt(a[1]);
+            for (var i = start;i<=end;i++){
+                var s = i.toString();
+                if (i < 10){
+                    s = "node0" + s;
+                    output.push(s);
+                }
+                else {
+                    output.push("node" +s);
+                }
+               
+            }
+        }
+        else {
+            if (!element.includes("visu")){
+                output.push("node"+element);
+            }
+            else {
+                output.push("visu01")
+            }
+            
+            
+        }
+    
+    }
+    );
+    return output;
+    
+    }
+
+
+// function gpusInfo(){
+
+// }
+
 
 // Example usage:
 fetchData('static/json/result01.json', 'partitionSelect', 'partitionInfo');
