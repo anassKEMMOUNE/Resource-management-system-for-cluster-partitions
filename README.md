@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This web application allows users to select a partition and automatically displays the number of available CPUs and GPUs in that partition. The application leverages scontrol, squeue, and sinfo commands for data collection and uses Dash to create a user interface. It is primarily developed using Python's Flask, JavaScript, HTML, and CSS.
+This web application allows users to select a partition and automatically displays the number of available CPUs and GPUs in that partition. The application leverages scontrol, squeue, and sinfo commands for data collection. It is primarily developed using Python's Flask, JavaScript, HTML, and CSS.
 
 ## How to Install and Run
 
